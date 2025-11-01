@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Techie hero visuals */
+.hero-grid {
+	position: absolute;
+	inset: 0;
+	background-image: linear-gradient(to right, rgba(100,116,139,.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(100,116,139,.15) 1px, transparent 1px);
+	background-size: 24px 24px;
+}
+.hero-glow {
+	position: absolute;
+	left: 50%;
+	top: 30%;
+	width: 600px;
+	height: 600px;
+	transform: translate(-50%, -50%);
+	background: radial-gradient(closest-side, rgba(34,211,238,.25), rgba(168,85,247,.12), transparent 70%);
+	filter: blur(30px);
+	opacity: .9;
+}
+
+
