@@ -3,12 +3,14 @@ USE devhive;
 SET FOREIGN_KEY_CHECKS=0;
 TRUNCATE TABLE applications;
 TRUNCATE TABLE projects;
+TRUNCATE TABLE users;
 SET FOREIGN_KEY_CHECKS=1;
 
-INSERT IGNORE INTO users (id, name, email, password_hash)
+-- Demo users: password is 'password123' for both
+INSERT INTO users (id, name, email, password_hash)
 VALUES
-(1, 'Alice Example', 'alice@example.com', '$2a$10$ZV6bE5v6qkXj3b3vJq7y2e5oV6vIYbJ1f1m7m4XkXhS8w1n1l9u1e'),
-(2, 'Bob Builder', 'bob@example.com', '$2a$10$ZV6bE5v6qkXj3b3vJq7y2e5oV6vIYbJ1f1m7m4XkXhS8w1n1l9u1e');
+(1, 'Alice Example', 'alice@example.com', '$2a$10$h6RUCaetdGr6YdZE1Bvcj.kdptzKtE91ok5j7SIKgHgjwsDVmCcXy'),
+(2, 'Bob Builder', 'bob@example.com', '$2a$10$h6RUCaetdGr6YdZE1Bvcj.kdptzKtE91ok5j7SIKgHgjwsDVmCcXy');
 
 INSERT INTO projects (owner_id, title, description, roles, technologies)
 VALUES
