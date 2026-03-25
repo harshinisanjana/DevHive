@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
-    "build:frontend": "cd frontend && npm run build"
+    "build": "cd frontend && npm install && npm run build && cp dist/index.html ../ && cp -r dist/assets ../ && cd ../backend && npm install",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
   }
+
 }
