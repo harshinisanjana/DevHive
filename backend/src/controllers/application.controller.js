@@ -15,12 +15,13 @@ async function applyToProject(req, res) {
 	if (!projectId) return res.status(400).json({ error: 'projectId required' });
 	if (!req.user?.id) return res.status(401).json({ error: 'User not authenticated' });
 	
-	// Handle file upload - make it optional
+	// Handle file upload
 	let resumePath = null;
 	if (req.file) {
-		resumePath = `/uploads/${req.file.filename}`;
-		console.log('File uploaded:', req.file);
+		resumePath = req.file.path; // For Cloudinary, path is the URL
+		console.log('File uploaded to Cloudinary:', resumePath);
 	}
+
 	
 	try {
 		const [result] = await pool.query(

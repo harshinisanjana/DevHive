@@ -44,10 +44,11 @@ export function AuthProvider({ children }) {
 	}
 
 	function logout() {
-		localStorage.removeItem('token');
-		localStorage.removeItem('user');
+		localStorage.clear(); // Clear everything to be safe
 		setUser(null);
+		window.location.href = '/'; // Force a full page reload to clear any remaining state
 	}
+
 
 	const value = { user, login, register, logout, api };
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -14,7 +14,12 @@ const applicationsRouter = require('./routes/applications');
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+const corsOptions = {
+	origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : '*',
+	credentials: true,
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(morgan('dev'));
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
@@ -30,7 +35,18 @@ app.use('/applications', applicationsRouter);
 
 const port = process.env.PORT || 4000;
 
+// Global Error Handler
+app.use((err, req, res, next) => {
+	console.error('Unhandled Error:', err);
+	const status = err.status || 500;
+	res.status(status).json({
+		error: err.message || 'Internal Server Error',
+		...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+	});
+});
+
 async function start() {
+
 	try {
 		// Simple DB ping on boot
 		await pool.query('SELECT 1');

@@ -26,61 +26,31 @@ export default function ProjectDetailPage() {
 
 	useEffect(() => {
 		if (user && project && user.id === project.owner_id) {
-			// Use placeholder applications for demo
-			const demoApps = JSON.parse(localStorage.getItem('demo_applications') || '[]');
-			const projectApps = demoApps.filter(app => app.project_id == project.id);
-			
-			// Add some sample applications for demo
-			const sampleApps = [
-				{
-					id: 201,
-					project_id: project.id,
-					applicant_id: 2,
-					applicant_name: 'John Developer',
-					applicant_email: 'john@example.com',
-					message: 'I have 5 years of experience with React and would love to contribute!',
-					status: 'pending',
-					created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-				},
-				{
-					id: 202,
-					project_id: project.id,
-					applicant_id: 3,
-					applicant_name: 'Sarah Designer',
-					applicant_email: 'sarah@example.com',
-					message: 'Experienced UI/UX designer with strong portfolio.',
-					status: 'accepted',
-					created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
-				}
-			];
-			
-			setOwnerApps([...projectApps, ...sampleApps]);
+			api.get(`/applications/project/${project.id}`)
+				.then(({ data }) => setOwnerApps(data))
+				.catch(err => console.error('Error fetching applications:', err));
 		}
-	}, [user, project]);
+	}, [user, project, api]);
+
 
 	// Check if current user has already applied to this project
 	useEffect(() => {
 		if (user && project && user.id !== project.owner_id) {
-			// Check placeholder applications
-			const demoApps = JSON.parse(localStorage.getItem('demo_applications') || '[]');
-			const userApp = demoApps.find(app => app.project_id == project.id && app.applicant_id == user.id);
-			setUserApplication(userApp);
-			setApplied(!!userApp);
+			api.get('/applications/me')
+				.then(({ data }) => {
+					const app = data.find(a => a.project_id == project.id);
+					setUserApplication(app);
+					setApplied(!!app);
+				})
+				.catch(err => console.error('Error checking application status:', err));
 		}
-	}, [user, project]);
+	}, [user, project, api]);
+
 
 	async function updateApplicationStatus(appId, status) {
 		setUpdatingApp(appId);
 		try {
-			// Simulate API call
-			await new Promise(resolve => setTimeout(resolve, 500));
-			
-			// Update placeholder data
-			const demoApps = JSON.parse(localStorage.getItem('demo_applications') || '[]');
-			const updatedApps = demoApps.map(app => 
-				app.id === appId ? { ...app, status } : app
-			);
-			localStorage.setItem('demo_applications', JSON.stringify(updatedApps));
+			await api.patch(`/applications/${appId}`, { status });
 			
 			// Update local state
 			setOwnerApps(prev => prev.map(app => 
@@ -95,6 +65,7 @@ export default function ProjectDetailPage() {
 			setUpdatingApp(null);
 		}
 	}
+
 
 	if (loading) {
 		return (
@@ -118,48 +89,27 @@ export default function ProjectDetailPage() {
 			return;
 		}
 		
-		// Simulate application submission with placeholder data
 		try {
-			console.log('Submitting application (placeholder mode):', {
-				projectId: project.id,
-				message,
-				portfolioUrl,
-				hasResume: !!resumeFile,
-				resumeFileName: resumeFile?.name,
-				userId: user.id
+			const formData = new FormData();
+			formData.append('projectId', project.id);
+			formData.append('message', message);
+			formData.append('portfolioUrl', portfolioUrl);
+			if (resumeFile) formData.append('resume', resumeFile);
+
+			const { data } = await api.post('/applications', formData, {
+				headers: { 'Content-Type': 'multipart/form-data' }
 			});
 			
-			// Simulate network delay
-			await new Promise(resolve => setTimeout(resolve, 1000));
-			
-			// Create placeholder application data
-			const placeholderApplication = {
-				id: Date.now(),
-				project_id: project.id,
-				applicant_id: user.id,
-				message: message || 'No message provided',
-				resume_path: resumeFile ? `/uploads/${resumeFile.name}` : null,
-				portfolio_url: portfolioUrl || null,
-				status: 'pending',
-				created_at: new Date().toISOString(),
-				applicant_name: user.name,
-				applicant_email: user.email
-			};
-			
-			// Store in localStorage for demo purposes
-			const existingApps = JSON.parse(localStorage.getItem('demo_applications') || '[]');
-			existingApps.push(placeholderApplication);
-			localStorage.setItem('demo_applications', JSON.stringify(existingApps));
-			
 			setApplied(true);
-			setUserApplication(placeholderApplication);
-			alert('Application submitted successfully! (Demo mode)');
+			setUserApplication(data); // Backend returns the new application object
+			alert('Application submitted successfully!');
 			
 		} catch (err) {
 			console.error('Error submitting application:', err);
-			alert('Failed to submit application. Please try again.');
+			alert(err.response?.data?.error || 'Failed to submit application. Please try again.');
 		}
 	}
+
 
 	return (
 		<div className="min-h-screen bg-black text-slate-200" style={{ fontFamily: "'Cascadia Code', 'Cascadia Mono', 'Consolas', monospace" }}>

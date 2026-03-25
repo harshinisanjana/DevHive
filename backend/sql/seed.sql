@@ -9,8 +9,9 @@ SET FOREIGN_KEY_CHECKS=1;
 -- Demo users: password is 'password123' for both
 INSERT INTO users (id, name, email, password_hash)
 VALUES
-(1, 'Alice Example', 'alice@example.com', '$2a$10$h6RUCaetdGr6YdZE1Bvcj.kdptzKtE91ok5j7SIKgHgjwsDVmCcXy'),
-(2, 'Bob Builder', 'bob@example.com', '$2a$10$h6RUCaetdGr6YdZE1Bvcj.kdptzKtE91ok5j7SIKgHgjwsDVmCcXy');
+(1, 'Demo Owner', 'owner@example.com', '$2a$10$h6RUCaetdGr6YdZE1Bvcj.kdptzKtE91ok5j7SIKgHgjwsDVmCcXy'),
+(2, 'Demo Applicant', 'applicant@example.com', '$2a$10$h6RUCaetdGr6YdZE1Bvcj.kdptzKtE91ok5j7SIKgHgjwsDVmCcXy');
+
 
 INSERT INTO projects (owner_id, title, description, roles, technologies)
 VALUES

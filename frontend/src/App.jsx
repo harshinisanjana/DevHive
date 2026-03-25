@@ -24,11 +24,9 @@ function Layout({ children }) {
 	const { user, logout } = useAuth();
 	
 	const handleLogout = () => {
-		if (window.confirm('Are you sure you want to log out?')) {
-			logout();
-			alert('You have been successfully logged out');
-		}
+		logout();
 	};
+
 
 	return (
 		<div className="min-h-screen bg-black text-slate-100 relative overflow-hidden">
